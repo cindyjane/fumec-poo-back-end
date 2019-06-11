@@ -6,8 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CompraRowMapper implements RowMapper<NomeData> {
-
+public class NomeDataRowMapper implements RowMapper<NomeData> {
     @Override
     public NomeData mapRow(ResultSet rs, int rowNum) throws SQLException {
         NomeData compra = new NomeData();
@@ -17,6 +16,4 @@ public class CompraRowMapper implements RowMapper<NomeData> {
 
         return compra;
     }
-
-
 }

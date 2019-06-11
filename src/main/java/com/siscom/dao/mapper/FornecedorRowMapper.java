@@ -13,6 +13,7 @@ public class FornecedorRowMapper  implements RowMapper<Fornecedor>{
     public Fornecedor mapRow(ResultSet rs, int rowNum) throws SQLException {
         Fornecedor fornecedor = new Fornecedor();
 
+        fornecedor.setCodigo(rs.getInt("CODIGO"));
         fornecedor.setNome(rs.getString("NOME"));
         fornecedor.setTelefones(rs.getString("TELEFONES"));
         fornecedor.setEmail(rs.getString("EMAIL"));

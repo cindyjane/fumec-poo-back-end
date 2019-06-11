@@ -2,9 +2,15 @@ package com.siscom.service.model;
 
 
 import com.siscom.exception.SisComException;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
+@Getter
+@Setter
+@Builder
 public class Produto {
 	
 	private int codigo;
@@ -14,42 +20,6 @@ public class Produto {
 	private int estoqueMinimo;
 	private Date dateCad;
 
-	public int getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(int codigo) {
-		this.codigo = codigo;
-	}
-	public String getNome() {
-		return nome;
-	}
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-	public double getPrecoUnitario() {
-		return precoUnitario;
-	}
-	public void setPrecoUnitario(double precoUnitario) {
-		this.precoUnitario = precoUnitario;
-	}
-	public int getEstoque() {
-		return estoque;
-	}
-	public void setEstoque(int estoque) {
-		this.estoque = estoque;
-	}
-	public int getEstoqueMinimo() {
-		return estoqueMinimo;
-	}
-	public void setEstoqueMinimo(int estoqueMinimo) {
-		this.estoqueMinimo = estoqueMinimo;
-	}
-	public Date getDateCad() {
-		return dateCad;
-	}
-	public void setDateCad(Date dateCad) {
-		this.dateCad = dateCad;
-	}
 	@Override
 	public String toString() {
 		return "Produto [codigo=" + codigo + ", nome=" + nome + ", precoUnitario=" + precoUnitario + ", estoque="

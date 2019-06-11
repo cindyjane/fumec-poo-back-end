@@ -6,6 +6,7 @@ import com.siscom.dao.mapper.ItemCompraRowMapper;
 import com.siscom.service.model.Compra;
 import com.siscom.service.model.Estatistica;
 import com.siscom.service.model.ItemCompra;
+import com.siscom.service.model.NomeData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -49,16 +50,18 @@ public class CompraRepository implements Serializable {
         }
     }
 
-    public List<Compra> obterListaCompras(String nomeFornecedor, Date de, Date para) {
-        String query = "SELECT P.NOME, C.Data, C.* FROM COMPRA C " +
-                "INNER JOIN PESSOA P ON C.COD_FORNECEDOR = P.CODIGO " +
-                "WHERE P.NOME LIKE '%?%' AND DATA BETWEEN ? AND ? ORDER BY P.NOME ASC, C.DATA DESC";
+    public List<NomeData> obterListaCompras(String nomeFornecedor, Date de, Date para) {
+        String nome = nomeFornecedor != null ? nomeFornecedor.toLowerCase() : "";
 
-        return jdbcTemplate.query(query, new Object[] { nomeFornecedor, de, para }, new CompraRowMapper());
+        String query = "SELECT P.NOME, C.Data FROM COMPRA C " +
+                "INNER JOIN PESSOA P ON C.COD_FORNECEDOR = P.CODIGO " +
+                "WHERE LOWER(P.NOME) LIKE ? AND DATA BETWEEN ? AND ? ORDER BY P.NOME ASC, C.DATA DESC";
+
+        return jdbcTemplate.query(query, new Object[] { "%" + nome + "%", de, para }, new CompraRowMapper());
     }
 
     public List<Estatistica> buscarEstatisticaCompras(Date de, Date para) {
-        String query = "SELECT P.NOME, COUNT(C.*) AS QTD_ACAO, SUM(IC.QUANTIDADE * IC.VALOR_UNITARIO) AS VALOR_TOTAL\n" +
+        String query = "SELECT P.NOME, (SELECT COUNT(1) FROM COMPRA CC WHERE CC.COD_FORNECEDOR = P.CODIGO) AS QTD_ACAO, SUM(IC.QUANTIDADE * IC.VALOR_UNITARIO) AS VALOR_TOTAL\n" +
                 "FROM COMPRA C \n" +
                 "INNER JOIN PESSOA P ON C.COD_FORNECEDOR = P.CODIGO\n" +
                 "INNER JOIN ITEM_COMPRA IC ON C.NUMCOMPRA = IC.CODIGO_COMPRA\n" +

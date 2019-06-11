@@ -4,6 +4,7 @@ import com.siscom.dao.mapper.ClienteRowMapper;
 import com.siscom.dao.mapper.ProdutoRowMapper;
 import com.siscom.service.model.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -28,21 +29,36 @@ public class ProdutoRepository {
 
     public Produto buscarProduto(Integer codigo) {
         String query = "SELECT * FROM PRODUTO WHERE CODIGO = ?";
-        return jdbcTemplate.queryForObject(query, new Object[] { codigo }, new ProdutoRowMapper());
+        try {
+            return jdbcTemplate.queryForObject(query, new Object[] { codigo }, new ProdutoRowMapper());
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
     public List<Produto> buscarProdutosOrdemAlfabetica(String nomeProduto, Boolean emFalta) {
         String query = "";
+        String nomeProd = nomeProduto != null ? nomeProduto.toLowerCase() : "";
 
-        if (emFalta) {
-            query = "SELECT * FROM PRODUTO WHERE LOWER(NOME) LIKE ? AND ESTOQUE < ESTOQUEMINIMO ORDER BY NOME";
-            return jdbcTemplate.query(query, new Object[] { "%" + nomeProduto.toLowerCase() + "%" },
+        if(emFalta == null){
+            query = "SELECT * FROM PRODUTO WHERE LOWER(NOME) LIKE ? ORDER BY NOME";
+            return jdbcTemplate.query(query, new Object[] { "%" + nomeProd + "%" },
                     new ProdutoRowMapper());
         }
 
-        query = "SELECT * FROM PRODUTO WHERE LOWER(NOME) LIKE ? ORDER BY NOME";
-        return jdbcTemplate.query(query, new Object[] { "%" + nomeProduto.toLowerCase() + "%" },
-                new ProdutoRowMapper());
+        if (emFalta) {
+            query = "SELECT * FROM PRODUTO WHERE LOWER(NOME) LIKE ? AND ESTOQUE < ESTOQUEMINIMO ORDER BY NOME";
+            return jdbcTemplate.query(query, new Object[] { "%" + nomeProd + "%" },
+                    new ProdutoRowMapper());
+        }
+
+        if (!emFalta) {
+            query = "SELECT * FROM PRODUTO WHERE LOWER(NOME) LIKE ? AND ESTOQUE >= ESTOQUEMINIMO ORDER BY NOME";
+            return jdbcTemplate.query(query, new Object[] { "%" + nomeProd + "%" },
+                    new ProdutoRowMapper());
+        }
+
+        return null;
     }
 
     public int atualizarEstoque(Integer codigo, Integer quantidade) {

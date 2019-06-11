@@ -1,19 +1,17 @@
-package com.siscom.controller.dto;
+package com.siscom.service.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProdutoDto {
+public class NomeData {
     private String nome;
-    private Double precoUnitario;
-    private Integer estoque;
-    private Integer estoqueMinimo;
+    private Date data;
 }

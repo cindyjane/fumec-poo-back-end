@@ -1,5 +1,7 @@
 package com.siscom.service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 
 public abstract class Pessoa {
@@ -9,10 +11,8 @@ public abstract class Pessoa {
 	private String telefones;
 	private String email;
 	private Date dateCad;
-	
+
 	public abstract TipoPessoa informarTipoPessoa();
-	
-	public Pessoa getPessoa() { return this; }
 	
 	@Override
 	public String toString() {

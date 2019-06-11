@@ -1,10 +1,15 @@
 package com.siscom.service.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
 
+@Getter
+@Setter
 public class Cliente extends Pessoa implements Serializable {
 
 	private String cpf;
@@ -28,19 +33,4 @@ public class Cliente extends Pessoa implements Serializable {
 		return "Cliente [cpf=" + cpf + ", limiteCredito=" + limiteCredito + "]";
 	}
 
-	public String getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
-	public double getLimiteCredito() {
-		return limiteCredito;
-	}
-
-	public void setLimiteCredito(double limiteCredito) {
-		this.limiteCredito = limiteCredito;
-	}
 }

@@ -6,14 +6,19 @@ import com.siscom.controller.dto.PessoaDto;
 import com.siscom.controller.dto.ProdutoDto;
 import com.siscom.controller.dto.VendaDto;
 import com.siscom.controller.mapper.PessoaMapper;
+import com.siscom.controller.mapper.ProdutoMapper;
 import com.siscom.service.ComercialService;
 import com.siscom.service.model.Cliente;
 import com.siscom.service.model.Compra;
+import com.siscom.service.model.Estatistica;
+import com.siscom.service.model.NomeData;
 import com.siscom.service.model.Pessoa;
 import com.siscom.service.model.Produto;
 import com.siscom.service.model.TipoPessoa;
 import com.siscom.service.model.Venda;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,8 +45,13 @@ public class ComercialController {
 
     @GetMapping("/pessoa/{cpfCnpj}")
     public ResponseEntity<Pessoa> buscarPessoa(@PathVariable(value = "cpfCnpj") String cpfCnpj) {
-        //ToDO: Pessoa pessoa = comercialService.buscarPessoa(cpfCnpj);
-        return ResponseEntity.ok(null);
+        Pessoa pessoa = comercialService.buscarPessoa(cpfCnpj);
+
+        if (pessoa == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(pessoa);
     }
 
     /**
@@ -52,70 +62,76 @@ public class ComercialController {
      * @return
      */
     @GetMapping("/pessoa")
-    public ResponseEntity<ArrayList<Pessoa>> buscarPessoasOrdemAlfabetica(@RequestParam(value = "query", required = false) String query,
-                                                                          @RequestParam(value = "tipoPessoa",
-                                                                                        required = false)
-                                                                                  TipoPessoa tipoPessoa) {
-        //ToDO: ArrayList<Pessoa> pessoas = comercialService.buscarPessoa(cpfCnpj);
-        return ResponseEntity.ok(null);
+    public ResponseEntity<ArrayList<Pessoa>> buscarPessoasOrdemAlfabetica(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "tipoPessoa",
+                          required = false)
+                    TipoPessoa tipoPessoa) {
+        return ResponseEntity.ok(comercialService.buscarPessoaOrdemAlfabetica(query, tipoPessoa));
     }
 
     /**
      * Bucscar um produto pelo codigo
+     *
      * @param codigo
      * @return
      */
     @GetMapping("/produto/{codigo}")
     public ResponseEntity<Produto> buscarProduto(@PathVariable Integer codigo) {
-        //Todo: Produto produto = comercialService.buscarProduto(codigo);
-        return ResponseEntity.ok(null);
+        Produto prod = comercialService.buscarProduto(codigo);
+
+        if (prod == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(prod);
     }
 
     @GetMapping("/produto")
-    public ResponseEntity<ArrayList<Produto>> buscarProdutosOrdemAlfabetica(@RequestParam(value = "query", required = false) String query,
-                                                                            @RequestParam(value = "emFalta", required = false)
-                                                                                    Boolean emFalta) {
-        // ToDo: comercialService.buscarProdutos(query);
-        return ResponseEntity.ok(null);
+    public ResponseEntity<ArrayList<Produto>> buscarProdutosOrdemAlfabetica(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "emFalta", required = false)
+                    Boolean emFalta) {
+        return ResponseEntity.ok(comercialService.buscarProdutoOrdemAlfabetica(query, emFalta));
     }
 
     @GetMapping("/venda")
-    public ResponseEntity<ArrayList<Venda>> obterListaVendas(@RequestParam(value = "tipoPessoa", required = false) TipoPessoa tipoPessoa,
-                                                             @RequestParam(value = "de") Date de,
-                                                             @RequestParam(value = "para") Date para) {
-        // ToDO: comercialService.buscarVendas();
-        return ResponseEntity.ok(null);
+    public ResponseEntity<ArrayList<NomeData>> obterListaVendas(
+            @RequestParam(value = "tipoPessoa", required = false) TipoPessoa tipoPessoa,
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "de") @DateTimeFormat(pattern = "yyyy-MM-dd") Date de,
+            @RequestParam(value = "para") @DateTimeFormat(pattern = "yyyy-MM-dd") Date para) throws Exception {
+        return ResponseEntity.ok(comercialService.obterListaVendas(tipoPessoa, query, de, para));
     }
 
     @GetMapping("/compra")
-    public ResponseEntity<ArrayList<Compra>> obterListaCompras(@RequestParam(value = "de") Date de,
-                                                               @RequestParam(value = "para") Date para) {
-        // ToDO: comercialService.buscarCompras();
-        return ResponseEntity.ok(null);
+    public ResponseEntity<ArrayList<NomeData>> obterListaCompras(
+            @RequestParam(value = "nomeFornecedor", required = false) String nomeFornecedor,
+            @RequestParam(value = "de") @DateTimeFormat(pattern = "yyyy-MM-dd") Date de,
+            @RequestParam(value = "para") @DateTimeFormat(pattern = "yyyy-MM-dd") Date para) {
+        return ResponseEntity.ok(comercialService.obterListaCompras(nomeFornecedor, de, para));
     }
 
     @GetMapping("/venda/statistics")
-    public ResponseEntity<ArrayList<EstatisticaDto>> buscarEstatisticaVendas(
+    public ResponseEntity<ArrayList<Estatistica>> buscarEstatisticaVendas(
             @RequestParam(value = "tipoPessoa") TipoPessoa tipoPessoa,
-            @RequestParam(value = "de") Date de,
-            @RequestParam(value = "para") Date para) {
+            @RequestParam(value = "de") @DateTimeFormat(pattern = "yyyy-MM-dd") Date de,
+            @RequestParam(value = "para") @DateTimeFormat(pattern = "yyyy-MM-dd") Date para) throws Exception {
 
-        // ToDo: comercialService.buscarEstatisticasVendas();
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(comercialService.buscarEstatisticaVendas(tipoPessoa, de, para));
     }
 
     @GetMapping("/compra/statistics")
-    public ResponseEntity<ArrayList<EstatisticaDto>> buscarEstatisticaCompras(
-            @RequestParam(value = "de") Date de,
-            @RequestParam(value = "para") Date para) {
-        // ToDo: comercialService.buscarEstatisticasCompras();
-        return ResponseEntity.ok(null);
+    public ResponseEntity<ArrayList<Estatistica>> buscarEstatisticaCompras(
+            @RequestParam(value = "de") @DateTimeFormat(pattern = "yyyy-MM-dd") Date de,
+            @RequestParam(value = "para") @DateTimeFormat(pattern = "yyyy-MM-dd") Date para) {
+        return ResponseEntity.ok(comercialService.buscarEstatisticaCompras(de, para));
     }
 
     // POST
 
     /**
      * Inserir uma pessoa
+     *
      * @param pessoa
      * @return
      * @throws Exception
@@ -123,25 +139,25 @@ public class ComercialController {
     @PostMapping("/pessoa")
     public ResponseEntity addPessoa(@RequestBody PessoaDto pessoa) throws Exception {
         comercialService.addPessoa(PessoaMapper.mapToModel(pessoa));
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/compra")
     public ResponseEntity fazerCompra(@RequestBody CompraDto compra) throws Exception {
-        // ToDo: comercialService.criarCompra(fornecedor1, listItens);
-        return ResponseEntity.noContent().build();
+        comercialService.criarCompra(compra.getCodigoFornecedor(), compra.getItensCompra());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/venda")
     public ResponseEntity fazerVenda(@RequestBody VendaDto venda) throws Exception {
-        // ToDo: comercialService.fazerVendaParaCliente(venda);
-        return ResponseEntity.noContent().build();
+        comercialService.fazerVendaParaCliente(venda.getCodigoCliente(), venda.getCodigoVendedor(), venda.getFormaPagamento(), venda.getItensVenda());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/produto")
     public ResponseEntity inserirProduto(@RequestBody ProdutoDto produto) {
-        // ToDo: comercialService.addProduto(prod1);
-        return ResponseEntity.noContent().build();
+        comercialService.addProduto(ProdutoMapper.mapToModel(produto));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // DELETE

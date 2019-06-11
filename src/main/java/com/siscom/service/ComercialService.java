@@ -1,5 +1,6 @@
 package com.siscom.service;
 
+import com.siscom.controller.dto.EstatisticaDto;
 import com.siscom.dao.CompraRepository;
 import com.siscom.dao.PessoaRepository;
 import com.siscom.dao.ProdutoRepository;
@@ -7,10 +8,12 @@ import com.siscom.dao.VendaRepository;
 import com.siscom.exception.SisComException;
 import com.siscom.service.model.Cliente;
 import com.siscom.service.model.Compra;
+import com.siscom.service.model.Estatistica;
 import com.siscom.service.model.FormaPgto;
 import com.siscom.service.model.Fornecedor;
 import com.siscom.service.model.ItemCompra;
 import com.siscom.service.model.ItemVenda;
+import com.siscom.service.model.NomeData;
 import com.siscom.service.model.Pessoa;
 import com.siscom.service.model.Produto;
 import com.siscom.service.model.TipoPessoa;
@@ -19,12 +22,16 @@ import com.siscom.service.model.Vendedor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class ComercialService {
+
+    private static final int[] pesoCPF = { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+    private static final int[] pesoCNPJ = { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
 
     @Autowired
     private PessoaRepository pessoaRepository;
@@ -86,22 +93,16 @@ public class ComercialService {
         produtoRepository.addProduto(produto);
     }
 
-    /**
-     * Add a Sale
-     *
-     * @param cliente
-     * @param vendedor
-     * @param formaPgto
-     * @param listaItensVenda
-     * @throws Exception
-     */
-    public void fazerVendaParaCliente(Cliente cliente,
-                                      Vendedor vendedor,
+    public void fazerVendaParaCliente(Integer codCliente,
+                                      Integer codVendedor,
                                       FormaPgto formaPgto,
                                       List<ItemVenda> listaItensVenda) throws Exception {
+        Cliente cliente = (Cliente) pessoaRepository.buscarPessoa(codCliente);
+        Vendedor vendedor = (Vendedor) pessoaRepository.buscarPessoa(codVendedor);
+
         double valorTotal = 0;
         for (ItemVenda itemVenda : listaItensVenda) {
-            valorTotal = +itemVenda.getValorVenda();
+            valorTotal = +itemVenda.getValorVenda() * itemVenda.getQuantVenda();
         }
         if (formaPgto.equals(FormaPgto.PAGAMENTO_A_PRAZO) && cliente.getLimiteCredito() < valorTotal) {
             throw new Exception("Venda não pode ser feita.");
@@ -112,7 +113,6 @@ public class ComercialService {
             for (ItemVenda itemVenda : listaItensVenda) {
                 excluirEstoque(itemVenda.getCodProduto(), itemVenda.getQuantVenda());
             }
-
         }
 
     }
@@ -263,6 +263,28 @@ public class ComercialService {
 
     //Search
 
+    public Pessoa buscarPessoa(String cpfCnpj) {
+        if (isValidCPF(cpfCnpj)) {
+            Pessoa vendedor = pessoaRepository.buscarVendedor(cpfCnpj);
+
+            if (vendedor != null) {
+                return vendedor;
+            }
+
+            return pessoaRepository.buscarCliente(cpfCnpj);
+        }
+
+        if (isValidCNPJ(cpfCnpj)) {
+            return pessoaRepository.buscarFornecedor(cpfCnpj);
+        }
+
+        return null;
+    }
+
+    public ArrayList<Pessoa> buscarPessoaOrdemAlfabetica(String query, TipoPessoa tipoPessoa) {
+        return new ArrayList<>(pessoaRepository.buscarPessoasOrdemAlfabetica(query, tipoPessoa));
+    }
+
     /**
      * Search for a Product
      *
@@ -271,6 +293,39 @@ public class ComercialService {
      */
     public Produto buscarProduto(Integer codigo) {
         return produtoRepository.buscarProduto(codigo);
+    }
+
+    public ArrayList<Produto> buscarProdutoOrdemAlfabetica(String query, Boolean emFalta) {
+        return new ArrayList<>(produtoRepository.buscarProdutosOrdemAlfabetica(query, emFalta));
+    }
+
+    public ArrayList<NomeData> obterListaVendas(TipoPessoa tipoPessoa, String query, Date de, Date para)
+            throws Exception {
+        if (tipoPessoa == TipoPessoa.CLIENTE) {
+            return new ArrayList<>(vendaRepository.obterListaVendasCliente(query, de, para));
+        }
+
+        if (tipoPessoa == TipoPessoa.VENDEDOR) {
+            return new ArrayList<>(vendaRepository.obterListaVendasVendedor(query, de, para));
+        }
+
+        throw new Exception("Fornecedores não possuem vendas!");
+    }
+
+    public ArrayList<NomeData> obterListaCompras(String nomeFornecedor, Date de, Date para) {
+        return new ArrayList<>(compraRepository.obterListaCompras(nomeFornecedor, de, para));
+    }
+
+    public ArrayList<Estatistica> buscarEstatisticaVendas(TipoPessoa tipoPessoa, Date de, Date para) throws Exception {
+        if (tipoPessoa == TipoPessoa.FORNECEDOR) {
+            throw new Exception("Fornecedores não possuem vendas!");
+        }
+
+        return new ArrayList<>(vendaRepository.obterEstatisticasVenda(de, para, tipoPessoa));
+    }
+
+    public ArrayList<Estatistica> buscarEstatisticaCompras(Date de, Date para) {
+        return new ArrayList<>(compraRepository.buscarEstatisticaCompras(de, para));
     }
 
     /**
@@ -283,4 +338,11 @@ public class ComercialService {
         return pessoaRepository.buscarPessoasOrdemAlfabetica(nomeCliente, tipoPessoa);
     }
 
+    private boolean isValidCPF(String cpf) {
+        return !((cpf == null) || (cpf.length() != 11));
+    }
+
+    private boolean isValidCNPJ(String cnpj) {
+        return !((cnpj == null) || (cnpj.length() != 14));
+    }
 }
