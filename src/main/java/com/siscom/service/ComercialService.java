@@ -328,16 +328,6 @@ public class ComercialService {
         return new ArrayList<>(compraRepository.buscarEstatisticaCompras(de, para));
     }
 
-    /**
-     * Search for a list of Clients
-     *
-     * @param nomeCliente
-     * @return
-     */
-    public List<Cliente> obterListaClientes(String nomeCliente, TipoPessoa tipoPessoa) {
-        return pessoaRepository.buscarPessoasOrdemAlfabetica(nomeCliente, tipoPessoa);
-    }
-
     private boolean isValidCPF(String cpf) {
         return !((cpf == null) || (cpf.length() != 11));
     }

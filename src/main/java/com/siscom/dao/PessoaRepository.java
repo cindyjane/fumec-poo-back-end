@@ -47,10 +47,10 @@ public class PessoaRepository {
                 vendedor.getDateCad(), vendedor.getCpf(), vendedor.getMetaMensal(), TipoPessoa.VENDEDOR.getCodigo());
     }
 
-    public List<Cliente> buscarPessoasOrdemAlfabetica(String nomePessoa, @Null TipoPessoa tipo) {
+    public List<Pessoa> buscarPessoasOrdemAlfabetica(String nomePessoa, @Null TipoPessoa tipo) {
         String query = "SELECT * FROM PESSOA WHERE LOWER(NOME) LIKE ? AND TIPO_PESSOA = ISNULL(?, TIPO_PESSOA) ORDER BY NOME";
         return jdbcTemplate.query(query, new Object[] { "%" + nomePessoa.toLowerCase() + "%", tipo != null ? tipo.getCodigo(): null },
-                new ClienteRowMapper());
+                new PessoaRowMapper());
     }
 
     public Pessoa buscarPessoa(Integer codPessoa) {

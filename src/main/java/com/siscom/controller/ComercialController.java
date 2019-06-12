@@ -1,25 +1,22 @@
 package com.siscom.controller;
 
 import com.siscom.controller.dto.CompraDto;
-import com.siscom.controller.dto.EstatisticaDto;
 import com.siscom.controller.dto.PessoaDto;
 import com.siscom.controller.dto.ProdutoDto;
 import com.siscom.controller.dto.VendaDto;
 import com.siscom.controller.mapper.PessoaMapper;
 import com.siscom.controller.mapper.ProdutoMapper;
 import com.siscom.service.ComercialService;
-import com.siscom.service.model.Cliente;
-import com.siscom.service.model.Compra;
 import com.siscom.service.model.Estatistica;
 import com.siscom.service.model.NomeData;
 import com.siscom.service.model.Pessoa;
 import com.siscom.service.model.Produto;
 import com.siscom.service.model.TipoPessoa;
-import com.siscom.service.model.Venda;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.Date;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class ComercialController {
 
