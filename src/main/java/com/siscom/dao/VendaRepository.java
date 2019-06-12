@@ -60,7 +60,7 @@ public class VendaRepository {
     public List<NomeData> obterListaVendasCliente(String nomeCliente, java.util.Date de, java.util.Date para) {
         String nome = nomeCliente != null ? nomeCliente.toLowerCase() : "";
 
-        String query = "SELECT P.NOME, V.Data FROM VENDA V INNER JOIN PESSOA P " +
+        String query = "SELECT V.NUMVENDA, P.NOME, V.Data FROM VENDA V INNER JOIN PESSOA P " +
                 "ON V.COD_CLIENTE = P.CODIGO WHERE P.NOME LIKE ? AND DATA BETWEEN ? AND ? ORDER BY P.NOME ASC, V.DATA DESC";
 
         return jdbcTemplate.query(query, new Object[] { "%" + nome + "%", de, para }, new NomeDataRowMapper());
@@ -69,7 +69,7 @@ public class VendaRepository {
     public List<NomeData> obterListaVendasVendedor(String nomeVendedor, java.util.Date de, java.util.Date para) {
         String nome = nomeVendedor != null ? nomeVendedor.toLowerCase() : "";
 
-        String query = "SELECT P.NOME, V.Data  FROM VENDA V INNER JOIN PESSOA P " +
+        String query = "SELECT V.NUMVENDA, P.NOME, V.Data  FROM VENDA V INNER JOIN PESSOA P " +
                 "ON V.COD_VENDEDOR = P.CODIGO WHERE P.NOME LIKE ? AND DATA BETWEEN ? AND ? ORDER BY P.NOME ASC, V.DATA DESC";
 
         return jdbcTemplate.query(query, new Object[] { "%" + nome + "%", de, para }, new NomeDataRowMapper());

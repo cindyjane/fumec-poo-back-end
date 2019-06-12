@@ -12,6 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NomeData {
+    private Integer num;
     private String nome;
     private Date data;
 }

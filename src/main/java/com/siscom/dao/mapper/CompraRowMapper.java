@@ -12,6 +12,7 @@ public class CompraRowMapper implements RowMapper<NomeData> {
     public NomeData mapRow(ResultSet rs, int rowNum) throws SQLException {
         NomeData compra = new NomeData();
 
+        compra.setNum(rs.getInt("NUMCOMPRA"));
         compra.setNome(rs.getString("NOME"));
         compra.setData(rs.getDate("Data"));
 

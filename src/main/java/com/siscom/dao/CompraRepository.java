@@ -53,7 +53,7 @@ public class CompraRepository implements Serializable {
     public List<NomeData> obterListaCompras(String nomeFornecedor, Date de, Date para) {
         String nome = nomeFornecedor != null ? nomeFornecedor.toLowerCase() : "";
 
-        String query = "SELECT P.NOME, C.Data FROM COMPRA C " +
+        String query = "SELECT C.NUMCOMPRA, P.NOME, C.Data FROM COMPRA C " +
                 "INNER JOIN PESSOA P ON C.COD_FORNECEDOR = P.CODIGO " +
                 "WHERE LOWER(P.NOME) LIKE ? AND DATA BETWEEN ? AND ? ORDER BY P.NOME ASC, C.DATA DESC";
 

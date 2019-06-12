@@ -9,11 +9,12 @@ import java.sql.SQLException;
 public class NomeDataRowMapper implements RowMapper<NomeData> {
     @Override
     public NomeData mapRow(ResultSet rs, int rowNum) throws SQLException {
-        NomeData compra = new NomeData();
+        NomeData venda = new NomeData();
 
-        compra.setNome(rs.getString("NOME"));
-        compra.setData(rs.getDate("Data"));
+        venda.setNum(rs.getInt("NUMVENDA"));
+        venda.setNome(rs.getString("NOME"));
+        venda.setData(rs.getDate("Data"));
 
-        return compra;
+        return venda;
     }
 }
