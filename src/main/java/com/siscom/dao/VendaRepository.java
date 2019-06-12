@@ -61,7 +61,7 @@ public class VendaRepository {
         String nome = nomeCliente != null ? nomeCliente.toLowerCase() : "";
 
         String query = "SELECT V.NUMVENDA, P.NOME, V.Data FROM VENDA V INNER JOIN PESSOA P " +
-                "ON V.COD_CLIENTE = P.CODIGO WHERE P.NOME LIKE ? AND DATA BETWEEN ? AND ? ORDER BY P.NOME ASC, V.DATA DESC";
+                "ON V.COD_CLIENTE = P.CODIGO WHERE LOWER(P.NOME) LIKE ? AND DATA BETWEEN ? AND ? ORDER BY P.NOME ASC, V.DATA DESC";
 
         return jdbcTemplate.query(query, new Object[] { "%" + nome + "%", de, para }, new NomeDataRowMapper());
     }
@@ -70,7 +70,7 @@ public class VendaRepository {
         String nome = nomeVendedor != null ? nomeVendedor.toLowerCase() : "";
 
         String query = "SELECT V.NUMVENDA, P.NOME, V.Data  FROM VENDA V INNER JOIN PESSOA P " +
-                "ON V.COD_VENDEDOR = P.CODIGO WHERE P.NOME LIKE ? AND DATA BETWEEN ? AND ? ORDER BY P.NOME ASC, V.DATA DESC";
+                "ON V.COD_VENDEDOR = P.CODIGO WHERE LOWER(P.NOME) LIKE ? AND DATA BETWEEN ? AND ? ORDER BY P.NOME ASC, V.DATA DESC";
 
         return jdbcTemplate.query(query, new Object[] { "%" + nome + "%", de, para }, new NomeDataRowMapper());
     }

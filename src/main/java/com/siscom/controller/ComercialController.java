@@ -103,7 +103,7 @@ public class ComercialController {
 
     @GetMapping("/compra")
     public ResponseEntity<ArrayList<NomeData>> obterListaCompras(
-            @RequestParam(value = "nomeFornecedor", required = false) String nomeFornecedor,
+            @RequestParam(value = "query", required = false) String nomeFornecedor,
             @RequestParam(value = "de") @DateTimeFormat(pattern = "yyyy-MM-dd") Date de,
             @RequestParam(value = "para") @DateTimeFormat(pattern = "yyyy-MM-dd") Date para) {
         return ResponseEntity.ok(comercialService.obterListaCompras(nomeFornecedor, de, para));
