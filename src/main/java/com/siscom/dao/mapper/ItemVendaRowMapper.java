@@ -15,7 +15,7 @@ public class ItemVendaRowMapper implements RowMapper<ItemVenda> {
 
         itemVenda.setCodProduto(rs.getInt("CODIGO_PRODUTO"));
         itemVenda.setQuantVenda(rs.getInt("QUANTIDADE"));
-        itemVenda.setValorVenda(rs.getDouble("VALOR_VENDA"));
+        itemVenda.setValorVenda(rs.getDouble("VALOR_UNITARIO"));
 
         return itemVenda;
     }
